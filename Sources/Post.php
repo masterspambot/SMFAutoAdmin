@@ -1206,6 +1206,52 @@ function Post()
 		loadTemplate('Post');
 }
 
+/**
+ * Validates the post in accordance with moderator settings.
+ * 
+ * @example
+ *  :* sdfdsf asdas@dds.pl sds ADSDS@assd.df gdfgdf XD http://wwwwdww.pl https://poasd.eW fsdf :D 9494823
+ */
+function regexp_checking()
+{
+  global $board, $topic, $txt, $modSettings, $sourcedir, $context;
+	global $user_info, $board_info, $options, $smcFunc;
+  
+  $message = $_REQUEST['message'];
+  $counters = new stdClass();
+  $email_regexp = '/([0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})/';
+  $url_regexp = '/((.{1,6}:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?)/';
+  $emot_regexp = '/(\:\))|(\;\))|(\:\-\))|(\;\-\))|(\:\()|(\:\-\()|(\;\()|(\;\-\()|(\:D)|(XD)|(\;\*)|(\:\*)/';
+  $gg_regexp = '/[0-9]{7,9}/';
+  $uppercase_regexp = '/[A-Z]/';
+  $lowercase_regexp = '/[^A-Z]/';  // lowercase and other chars
+  
+  if(true){
+    preg_match_all($email_regexp, $message, $matches);
+    $counters->emails = count($matches[0]);
+  }
+  if(true){
+    preg_match_all($url_regexp, $message, $matches);
+    $counters->urls = count($matches[0]);
+  }
+  if(true){
+    preg_match_all($emot_regexp, $message, $matches);
+    $counters->emots = count($matches[0]);
+  }
+  if(true){
+    preg_match_all($gg_regexp, $message, $matches);
+    $counters->gg = count($matches[0]);
+  }
+  if(true){
+    preg_match_all($uppercase_regexp, $message, $matches);
+    $counters->uppercase = count($matches[0]);
+    preg_match_all($lowercase_regexp, $message, $matches);
+    $counters->lowercase = count($matches[0]);
+  }
+  $counters->post_len = strlen($message);
+  fatal_error(print_r($counters,true));
+}
+
 function Post2()
 {
 	global $board, $topic, $txt, $modSettings, $sourcedir, $context;
@@ -1233,6 +1279,8 @@ function Post2()
 		// We need this for everything else.
 		$_POST['message'] = $_REQUEST['message'];
 	}
+  
+  regexp_checking();
 
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
