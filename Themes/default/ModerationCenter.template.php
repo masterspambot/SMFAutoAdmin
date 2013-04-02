@@ -775,7 +775,7 @@ function template_moderation_settings()
 					<label for="mod_ban_list">Ban word list: </label>
 				</dd>
 				<dd>
-					<textarea style="width: 243px; height: 80px;" id="mod_ban_list"></textarea>
+					<textarea style="width: 243px; height: 80px;" id="mod_ban_list" name="mod_ban_list"></textarea>
 				</dd>
 				<dd>
 					<label for="mod_ban_word">Ban list action: </label>
