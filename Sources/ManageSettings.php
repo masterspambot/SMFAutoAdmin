@@ -668,7 +668,7 @@ function ModifyModerationSettings($return_config = false)
 	// Cannot use moderation if post moderation is not enabled.
 	if (!$modSettings['postmod_active'])
 		unset($config_vars['moderate']);
-
+	
 	// Saving?
 	if (isset($_GET['save']))
 	{
