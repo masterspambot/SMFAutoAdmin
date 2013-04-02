@@ -750,123 +750,127 @@ function template_moderation_settings()
 						</dd>';
 	}
 
+	if ($context['can_moderate_approvals'])
+	{
+		echo '
+				<dt>
+					<strong><label>Action level filters</label>:</strong>
+				</dt>
+				<dd>
+					<label for="mod_forb_list">Forbiden word list: </label>
+				</dd>
+				<dd>
+					<textarea style="width: 243px; height: 80px;" id="mod_forb_list"></textarea>
+				</dd>
+				<dd>
+					<label for="mod_forb_word">Forbiden word list action: </label>
+					<select id="mod_forb_word">
+						<option value="0" ', $context['mod_settings']['mod_forb_word'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
+						<option value="1" ', $context['mod_settings']['mod_forb_word'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
+						<option value="2" ', $context['mod_settings']['mod_forb_word'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
+						<option value="3" ', $context['mod_settings']['mod_forb_word'] == 3 ? 'selected="selected"' : '', '>', 'Delete Account', '</option>
+					</select>
+				</dd>
+				<dd style="margin-top:10px;">
+					<label for="mod_ban_list">Ban word list: </label>
+				</dd>
+				<dd>
+					<textarea style="width: 243px; height: 80px;" id="mod_ban_list"></textarea>
+				</dd>
+				<dd>
+					<label for="mod_ban_word">Ban list action: </label>
+					<select style="margin-left: 59px;" id="mod_ban_word">
+						<option value="0" ', $context['mod_settings']['mod_ban_word'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
+						<option value="1" ', $context['mod_settings']['mod_ban_word'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
+						<option value="2" ', $context['mod_settings']['mod_ban_word'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
+						<option value="3" ', $context['mod_settings']['mod_ban_word'] == 3 ? 'selected="selected"' : '', '>', 'Delete Account', '</option>
+					</select>
+				</dd>
+				<dd style="margin-top:10px;">
+					<label for="mod_askimet_key">Askimet key: </label>
+				</dd>
+				<dd>
+					<textarea style="width: 243px; height: 40px;" id="mod_askimet_key"></textarea>
+				</dd>
+				<dd>
+					<label for="mod_askimet">Askimet filters: </label>
+					<select style="margin-left: 60px;" id="mod_askimet">
+						<option value="0" ', $context['mod_settings']['mod_askimet'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
+						<option value="1" ', $context['mod_settings']['mod_askimet'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
+						<option value="2" ', $context['mod_settings']['mod_askimet'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
+						<option value="3" ', $context['mod_settings']['mod_askimet'] == 3 ? 'selected="selected"' : '', '>', 'Delete Account', '</option>
+					</select>
+				</dd>
+				<dt style="margin-top:10px;">
+					<strong><label>Warn level filters</label>:</strong>
+				</dt>
+				<dd style="margin-top:10px;">
+					<label for="mod_block_gg">Block GG adresses: </label>
+					<select style="margin-left: 52px;" id="mod_block_gg">
+						<option value="0" ', $context['mod_settings']['mod_block_gg'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
+						<option value="1" ', $context['mod_settings']['mod_block_gg'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
+						<option value="2" ', $context['mod_settings']['mod_block_gg'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
+					</select>
+				</dd>
+				<dd>
+					<label for="mod_block_email">Block email in posts: </label>
+					<select style="margin-left: 48px;" id="mod_block_email">
+						<option value="0" ', $context['mod_settings']['mod_block_email'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
+						<option value="1" ', $context['mod_settings']['mod_block_email'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
+						<option value="2" ', $context['mod_settings']['mod_block_email'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
+					</select>
+				</dd>
+				<dd>
+					<label for="mod_block_links">Block link attachments: </label>
+					<select style="margin-left: 35px;" id="mod_block_links">
+						<option value="0" ', $context['mod_settings']['mod_block_links'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
+						<option value="1" ', $context['mod_settings']['mod_block_links'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
+						<option value="2" ', $context['mod_settings']['mod_block_links'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
+					</select>
+				</dd>
+				<dd>
+					<label for="mod_block_topic">Disable same topic names: </label>
+					<select style="margin-left: 12px;" id="mod_block_topic">
+						<option value="0" ', $context['mod_settings']['mod_block_topic'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
+						<option value="1" ', $context['mod_settings']['mod_block_topic'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
+						<option value="2" ', $context['mod_settings']['mod_block_topic'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
+					</select>
+				</dd>
+				<dt style="margin-top:10px;">
+					<strong><label>Adjustable level filters</label>:</strong>
+				</dt>
+				<dd style="margin-top:10px;">
+					<label for="mod_block_topic">Min. post length: </label>
+					<input type="number" style="width:60px; margin-left:32px;" value="', $context['mod_settings']['mod_min_len'] != null ? $context['mod_settings']['mod_min_len'] : 5, '" /> characters
+				</dd>
+				<dd>
+					<label for="mod_block_topic">Max. post length: </label>
+					<input type="number" style="width:60px; margin-left:29px;" value="', $context['mod_settings']['mod_max_len'] != null ? $context['mod_settings']['mod_max_len'] : 300, '" /> characters
+				</dd>
+				<dd>
+					<input type="checkbox" id="mod_block_topic_warn"', $context['mod_settings']['mod_block_topic_warn'] ? 'checked="checked"' : '', ' class="input_check" />
+					<label for="mod_block_topic_warn">Give warning points</label>
+				</dd>
+				<dd style="margin-top:10px;">
+					<label for="mod_max_caps">Max. caps in post: </label>
+					<input type="number" style="width:60px; margin-left:24px;" min="0" max="100" value="', $context['mod_settings']['mod_max_caps'] != null ? $context['mod_settings']['mod_max_caps'] : 20, '" /> %
+				</dd>
+				<dd>
+					<input type="checkbox" id="mod_max_caps_warn"', $context['mod_settings']['mod_max_caps_warn'] ? 'checked="checked"' : '', ' class="input_check" />
+					<label for="mod_block_topic_warn">Give warning points</label>
+				</dd>
+				<dd style="margin-top:10px;">
+					<label for="mod_max_emots">Max. emots in post: </label>
+					<input type="number" style="width:60px; margin-left:19px;" min="0" max="1000" value="', $context['mod_settings']['mod_max_emots'] != null ? $context['mod_settings']['mod_max_emots'] : 4, '" /> %
+				</dd>
+				<dd>
+					<input type="checkbox" id="mod_max_emots_warn" min="0" max="100"', $context['mod_settings']['mod_max_emots_warn'] ? 'checked="checked"' : '', ' class="input_check" />
+					<label for="mod_block_topic_warn">Give warning points</label>
+				</dd>
+				</dl>';
+		}
 	echo '
-					<dt>
-						<strong><label>Action level filters</label>:</strong>
-					</dt>
-					<dd>
-						<label for="mod_forb_list">Forbiden word list: </label>
-					</dd>
-					<dd>
-						<textarea style="width: 243px; height: 80px;" id="mod_forb_list"></textarea>
-					</dd>
-					<dd>
-						<label for="mod_forb_word">Forbiden word list action: </label>
-						<select id="mod_forb_word">
-							<option value="0" ', $context['mod_settings']['mod_forb_word'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
-							<option value="1" ', $context['mod_settings']['mod_forb_word'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
-							<option value="2" ', $context['mod_settings']['mod_forb_word'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
-							<option value="3" ', $context['mod_settings']['mod_forb_word'] == 3 ? 'selected="selected"' : '', '>', 'Delete Account', '</option>
-						</select>
-					</dd>
-					<dd style="margin-top:10px;">
-						<label for="mod_ban_list">Ban word list: </label>
-					</dd>
-					<dd>
-						<textarea style="width: 243px; height: 80px;" id="mod_ban_list"></textarea>
-					</dd>
-					<dd>
-						<label for="mod_ban_word">Ban list action: </label>
-						<select style="margin-left: 59px;" id="mod_ban_word">
-							<option value="0" ', $context['mod_settings']['mod_ban_word'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
-							<option value="1" ', $context['mod_settings']['mod_ban_word'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
-							<option value="2" ', $context['mod_settings']['mod_ban_word'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
-							<option value="3" ', $context['mod_settings']['mod_ban_word'] == 3 ? 'selected="selected"' : '', '>', 'Delete Account', '</option>
-						</select>
-					</dd>
-					<dd style="margin-top:10px;">
-						<label for="mod_askimet_key">Askimet key: </label>
-					</dd>
-					<dd>
-						<textarea style="width: 243px; height: 40px;" id="mod_askimet_key"></textarea>
-					</dd>
-					<dd>
-						<label for="mod_askimet">Askimet filters: </label>
-						<select style="margin-left: 60px;" id="mod_askimet">
-							<option value="0" ', $context['mod_settings']['mod_askimet'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
-							<option value="1" ', $context['mod_settings']['mod_askimet'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
-							<option value="2" ', $context['mod_settings']['mod_askimet'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
-							<option value="3" ', $context['mod_settings']['mod_askimet'] == 3 ? 'selected="selected"' : '', '>', 'Delete Account', '</option>
-						</select>
-					</dd>
-					<dt style="margin-top:10px;">
-						<strong><label>Warn level filters</label>:</strong>
-					</dt>
-					<dd style="margin-top:10px;">
-						<label for="mod_block_gg">Block GG adresses: </label>
-						<select style="margin-left: 52px;" id="mod_block_gg">
-							<option value="0" ', $context['mod_settings']['mod_block_gg'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
-							<option value="1" ', $context['mod_settings']['mod_block_gg'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
-							<option value="2" ', $context['mod_settings']['mod_block_gg'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
-						</select>
-					</dd>
-					<dd>
-						<label for="mod_block_email">Block email in posts: </label>
-						<select style="margin-left: 48px;" id="mod_block_email">
-							<option value="0" ', $context['mod_settings']['mod_block_email'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
-							<option value="1" ', $context['mod_settings']['mod_block_email'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
-							<option value="2" ', $context['mod_settings']['mod_block_email'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
-						</select>
-					</dd>
-					<dd>
-						<label for="mod_block_links">Block link attachments: </label>
-						<select style="margin-left: 35px;" id="mod_block_links">
-							<option value="0" ', $context['mod_settings']['mod_block_links'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
-							<option value="1" ', $context['mod_settings']['mod_block_links'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
-							<option value="2" ', $context['mod_settings']['mod_block_links'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
-						</select>
-					</dd>
-					<dd>
-						<label for="mod_block_topic">Disable same topic names: </label>
-						<select style="margin-left: 12px;" id="mod_block_topic">
-							<option value="0" ', $context['mod_settings']['mod_block_topic'] == 0 ? 'selected="selected"' : '', '>', 'Disabled', '</option>
-							<option value="1" ', $context['mod_settings']['mod_block_topic'] == 1 ? 'selected="selected"' : '', '>', 'Enabled', '</option>
-							<option value="2" ', $context['mod_settings']['mod_block_topic'] == 2 ? 'selected="selected"' : '', '>', 'Warn users', '</option>
-						</select>
-					</dd>
-					<dt style="margin-top:10px;">
-						<strong><label>Adjustable level filters</label>:</strong>
-					</dt>
-					<dd style="margin-top:10px;">
-						<label for="mod_block_topic">Min. post length: </label>
-						<input type="number" style="width:60px; margin-left:32px;" value="', $context['mod_settings']['mod_min_len'] != null ? $context['mod_settings']['mod_min_len'] : 5, '" /> characters
-					</dd>
-					<dd>
-						<label for="mod_block_topic">Max. post length: </label>
-						<input type="number" style="width:60px; margin-left:29px;" value="', $context['mod_settings']['mod_max_len'] != null ? $context['mod_settings']['mod_max_len'] : 300, '" /> characters
-					</dd>
-					<dd>
-						<input type="checkbox" id="mod_block_topic_warn"', $context['mod_settings']['mod_block_topic_warn'] ? 'checked="checked"' : '', ' class="input_check" />
-						<label for="mod_block_topic_warn">Give warning points</label>
-					</dd>
-					<dd style="margin-top:10px;">
-						<label for="mod_max_caps">Max. caps in post: </label>
-						<input type="number" style="width:60px; margin-left:24px;" min="0" max="100" value="', $context['mod_settings']['mod_max_caps'] != null ? $context['mod_settings']['mod_max_caps'] : 20, '" /> %
-					</dd>
-					<dd>
-						<input type="checkbox" id="mod_max_caps_warn"', $context['mod_settings']['mod_max_caps_warn'] ? 'checked="checked"' : '', ' class="input_check" />
-						<label for="mod_block_topic_warn">Give warning points</label>
-					</dd>
-					<dd style="margin-top:10px;">
-						<label for="mod_max_emots">Max. emots in post: </label>
-						<input type="number" style="width:60px; margin-left:19px;" min="0" max="1000" value="', $context['mod_settings']['mod_max_emots'] != null ? $context['mod_settings']['mod_max_emots'] : 4, '" /> %
-					</dd>
-					<dd>
-						<input type="checkbox" id="mod_max_emots_warn"', $context['mod_settings']['mod_max_emots_warn'] ? 'checked="checked"' : '', ' class="input_check" />
-						<label for="mod_block_topic_warn">Give warning points</label>
-					</dd>
-					</dl>
-				</div>
+			</div>
 				<div class="righttext">
 					<input type="hidden" name="', $context['session_var'], '" value="', $context['session_id'], '" />
 					<input type="submit" name="save" value="', $txt['save'], '" class="button_submit" />
@@ -877,6 +881,7 @@ function template_moderation_settings()
 	</div>
 	<br class="clear" />';
 }
+
 
 // Show a notice sent to a user.
 function template_show_notice()

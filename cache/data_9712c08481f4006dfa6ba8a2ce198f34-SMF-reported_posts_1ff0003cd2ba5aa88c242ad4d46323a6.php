@@ -1,1 +1,0 @@
-<?php if (!defined('SMF')) die; if (1364336658 < time()) $expired = true; else{$expired = false; $value = 'a:1:{i:0;a:9:{s:9:"id_report";s:1:"1";s:6:"id_msg";s:1:"2";s:8:"id_topic";s:1:"1";s:8:"id_board";s:1:"1";s:9:"id_member";s:1:"1";s:7:"subject";s:19:"Re: Welcome to SMF!";s:11:"num_reports";s:1:"1";s:11:"author_name";s:5:"admin";s:9:"id_author";s:1:"1";}}';}?>
