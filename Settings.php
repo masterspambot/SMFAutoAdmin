@@ -18,29 +18,39 @@ $mtitle = 'Maintenance Mode';		# Title for the Maintenance Mode message.
 $mmessage = 'Okay faithful users...we\'re attempting to restore an older backup of the database...news will be posted once we\'re back!';		# Description of why the forum is in maintenance mode.
 
 ########## Forum Info ##########
-$mbname = 'SMFAutoAdmin';		# The name of your forum.
+$mbname = 'SZBW';		# The name of your forum.
 $language = 'english';		# The default language file set for the forum.
-$boardurl = 'http://127.0.0.1';		# URL to your forum's folder. (without the trailing /!)
-$webmaster_email = 'asd@smf.com';		# Email address to send emails from. (like noreply@yourdomain.com.)
-$cookiename = 'SMFCookie956';		# Name of the cookie to set for authentication.
+$boardurl = 'http://happyball.pl/forum';		# URL to your forum's folder. (without the trailing /!)
+$webmaster_email = 'm.gurdzielewski@gmail.com';		# Email address to send emails from. (like noreply@yourdomain.com.)
+$cookiename = 'SMFCookie856';		# Name of the cookie to set for authentication.
 
 ########## Database Info ##########
 $db_type = 'mysql';
-$db_server = 'localhost';
-$db_name = 'smf';
-$db_user = 'root';
-$db_passwd = 'smf';
+$db_server = 'localhost:3306';
+
+$context['my_serwer'] = $db_server;
+
+$db_name = 'mrpop_sfm';
+$db_user = 'mrpop_sfm';
+$db_passwd = 'sfm';
+$db_prefix = 'smf_';
+
+$context['my_baza'] = $db_name;
+$context['my_nazwa'] = $db_user;
+$context['my_haslo'] = $db_passwd;
+$context['my_prefix'] = $db_prefix;
+
 $ssi_db_user = '';
 $ssi_db_passwd = '';
-$db_prefix = 'smf_';
+
 $db_persist = 0;
 $db_error_send = 1;
 
 ########## Directories/Files ##########
 # Note: These directories do not have to be changed unless you move things.
-$boarddir = '/home/smf/smf';		# The absolute path to the forum's folder. (not just '.'!)
-$sourcedir = '/home/smf/smf/Sources';		# Path to the Sources directory.
-$cachedir = '/home/smf/smf/cache';		# Path to the cache directory.
+$boarddir = '/home/mrpop/domains/happyball.pl/public_html/forum';		# The absolute path to the forum's folder. (not just '.'!)
+$sourcedir = '/home/mrpop/domains/happyball.pl/public_html/forum/Sources';		# Path to the Sources directory.
+$cachedir = '/home/mrpop/domains/happyball.pl/public_html/forum/cache';		# Path to the cache directory.
 
 ########## Error-Catching ##########
 # Note: You shouldn't touch these settings.
