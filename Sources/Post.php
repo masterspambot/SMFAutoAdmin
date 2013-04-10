@@ -1249,7 +1249,7 @@ function regexp_checking()
     $counters->lowercase = count($matches[0]);
   }
   $counters->post_len = strlen($message);
-  fatal_error(print_r($counters,true));
+  //fatal_error(print_r($counters,true));
 }
 
 function Post2()
