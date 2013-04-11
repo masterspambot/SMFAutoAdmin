@@ -1928,7 +1928,8 @@ CREATE TABLE {$db_prefix}dictionary_admin (
 
 
 #dodane slow do slownika
-
+#
+#
 insert into {$db_prefix}dictionary_admin(word, weight, word_status, active_word) values('Aeronauta',10, 0, 1);
 insert into {$db_prefix}dictionary_admin(word, weight, word_status, active_word) values('Albatros',10, 0, 1);
 insert into {$db_prefix}dictionary_admin(word, weight, word_status, active_word) values('Amazonka',10, 0, 1);
