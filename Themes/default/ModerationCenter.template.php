@@ -738,7 +738,7 @@ function template_moderation_settings()
 
 	}
 
-	if ($context['can_moderate_approvals'])
+	if ($context['can_moderate_boards'])
 	{
 		echo '
 
@@ -750,7 +750,7 @@ function template_moderation_settings()
 						</dd>';
 	}
 
-	if ($context['can_moderate_approvals'])
+	if ($context['can_moderate_boards'])
 	{
 		echo '
 				<dt>
@@ -760,7 +760,7 @@ function template_moderation_settings()
 					<label for="mod_forb_list">Forbiden word list: </label>
 				</dd>
 				<dd>
-					<textarea style="width: 243px; height: 80px;" id="mod_forb_list" name="mod_forb_list"></textarea>
+					<textarea style="width: 243px; height: 80px;" id="mod_forb_list" name="mod_forb_list">',$context['mod_settings']['mod_forb_list'],'</textarea>
 				</dd>
 				<dd>
 					<label for="mod_forb_word">Forbiden word list action: </label>
@@ -775,11 +775,11 @@ function template_moderation_settings()
 					<label for="mod_ban_list">Ban word list: </label>
 				</dd>
 				<dd>
-					<textarea style="width: 243px; height: 80px;" id="mod_ban_list" name="mod_ban_list"></textarea>
+					<textarea style="width: 243px; height: 80px;" id="mod_ban_list" name="mod_ban_list">',$context['mod_settings']['mod_ban_list'],'</textarea>
 				</dd>
 				<dd>
 					<label for="mod_ban_word">Ban list action: </label>
-					<select style="margin-left: 59px;" id="mod_ban_word">
+					<select style="margin-left: 59px;" id="mod_ban_word" name="mod_ban_word">
 						<option value="0" ', $context['mod_settings']['mod_ban_word'] == 0 ? 'selected="selected"' : '', '>', 'Warn', '</option>
 						<option value="1" ', $context['mod_settings']['mod_ban_word'] == 1 ? 'selected="selected"' : '', '>', 'Mute', '</option>
 						<option value="2" ', $context['mod_settings']['mod_ban_word'] == 2 ? 'selected="selected"' : '', '>', 'Moderate', '</option>
@@ -790,7 +790,7 @@ function template_moderation_settings()
 					<label for="mod_askimet_key">Askimet key: </label>
 				</dd>
 				<dd>
-					<textarea style="width: 243px; height: 40px;" id="mod_askimet_key" name="mod_askimet_key"></textarea>
+					<textarea style="width: 243px; height: 40px;" id="mod_askimet_key" name="mod_askimet_key">',$context['mod_settings']['mod_askimet_key'],'</textarea>
 				</dd>
 				<dd>
 					<label for="mod_askimet">Askimet filters: </label>
@@ -841,11 +841,11 @@ function template_moderation_settings()
 				</dt>
 				<dd style="margin-top:10px;">
 					<label for="mod_block_topic">Min. post length: </label>
-					<input type="number" style="width:60px; margin-left:32px;" name="min_post_len" value="', $context['mod_settings']['mod_min_len'] != null ? $context['mod_settings']['mod_min_len'] : 5, '" /> characters
+					<input type="number" style="width:60px; margin-left:32px;" name="mod_min_len" value="', $context['mod_settings']['mod_min_len'] != null ? $context['mod_settings']['mod_min_len'] : 5, '" /> characters
 				</dd>
 				<dd>
 					<label for="mod_block_topic">Max. post length: </label>
-					<input type="number" style="width:60px; margin-left:29px;" name="max_post_len" value="', $context['mod_settings']['mod_max_len'] != null ? $context['mod_settings']['mod_max_len'] : 300, '" /> characters
+					<input type="number" style="width:60px; margin-left:29px;" name="mod_max_len" value="', $context['mod_settings']['mod_max_len'] != null ? $context['mod_settings']['mod_max_len'] : 300, '" /> characters
 				</dd>
 				<dd>
 					<input type="checkbox" id="mod_block_topic_warn" name="mod_block_topic_warn"', $context['mod_settings']['mod_block_topic_warn'] ? 'checked="checked"' : '', ' class="input_check" />
