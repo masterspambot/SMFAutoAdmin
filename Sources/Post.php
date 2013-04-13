@@ -1249,7 +1249,7 @@ function regexp_checking()
     $counters->lowercase = count($matches[0]);
   }
   $counters->post_len = strlen($message);
-  fatal_error(print_r($counters,true));
+  //fatal_error(print_r($counters,true));
 }
 
 function Post2()
@@ -1931,32 +1931,44 @@ function Post2()
 		'email' => $_POST['email'],
 		'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],
 	);
+        
+        
+        
+        
+        require_once 'Dictionary.php';
 
 	// This is an already existing message. Edit it.
-	if (!empty($_REQUEST['msg']))
-	{
-		// Have admins allowed people to hide their screwups?
-		if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
-		{
-			$msgOptions['modify_time'] = time();
-			$msgOptions['modify_name'] = $user_info['name'];
-		}
+        $analiza_slownikowa = Dictionary::checkWithDictionary($_POST['message']);
+        if( $analiza_slownikowa == 0)
+        {
+            if (!empty($_REQUEST['msg']))
+            {
+                    // Have admins allowed people to hide their screwups?
+                    if (time() - $row['poster_time'] > $modSettings['edit_wait_time'] || $user_info['id'] != $row['id_member'])
+                    {
+                            $msgOptions['modify_time'] = time();
+                            $msgOptions['modify_name'] = $user_info['name'];
+                    }
 
-		// This will save some time...
-		if (empty($approve_has_changed))
-			unset($msgOptions['approved']);
+                    // This will save some time...
+                    if (empty($approve_has_changed))
+                            unset($msgOptions['approved']);
 
-		modifyPost($msgOptions, $topicOptions, $posterOptions);
-	}
-	// This is a new topic or an already existing one. Save it.
-	else
-	{
-		createPost($msgOptions, $topicOptions, $posterOptions);
+                    modifyPost($msgOptions, $topicOptions, $posterOptions);
+            }
+            // This is a new topic or an already existing one. Save it.
+            else
+            {
+                    createPost($msgOptions, $topicOptions, $posterOptions);
 
-		if (isset($topicOptions['id']))
-			$topic = $topicOptions['id'];
-	}
+                    if (isset($topicOptions['id']))
+                            $topic = $topicOptions['id'];
+            }
+            } else {
+                $result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $analiza_slownikowa);
+                fatal_error($result_raport, 'user');
 
+            }
 	// Editing or posting an event?
 	if (isset($_POST['calendar']) && (!isset($_REQUEST['eventid']) || $_REQUEST['eventid'] == -1))
 	{
