@@ -14,7 +14,12 @@ include (dirname(__FILE__) . '/../Settings.php');
 class Dictionary {
     public static function checkWithDictionary($message)
     {   
-        //Checking content of post with dictionary
+        global $modSettings;
+        $list_ban_word = $modSettings['mod_ban_list'];
+        $list_forbidden_words = $modSettings['mod_forb_list'];
+        $list = $list_ban_word.','.$list_forbidden_words;
+        $list = explode(',', $list);
+        
         Dictionary::connectToDatabase();
         $words = Dictionary::getAllWordsFromDictionary();
         $counter = 0;
@@ -23,11 +28,16 @@ class Dictionary {
                 $counter++;
             }
         }
+        foreach ($list as $w) {
+            if (strpos($message, $w) !== false) {
+                $counter++;
+            }
+        } 
         return $counter;
     }
     
     
-    public static function raportujZlamanieRegulaminu($user_id, $ilosc_bledow)
+    public static function raportujZlamanieRegulaminu($user_id, $points)
     {
         global $context;
         $prefix = $context['my_prefix'];
@@ -38,10 +48,11 @@ class Dictionary {
         Dictionary::executeQuery($str);
         $obj = Dictionary::getArray($str2);
         $licznik = $obj[0]->licznik;
-        $mes = "Twoj post jest w $ilosc_bledow miejscach niezgodny z regulaminem! To Twoje $licznik ostrzeżenie!";
-        if($licznik > 2) //tu nalezy uzyc zmiennej z panelu administracyjnego
+        $mes = "Twoj post jest w $points miejscach niezgodny z regulaminem! To Twoje $licznik ostrzeżenie!";
+        
+        
+        if($licznik > 5) //tu nalezy uzyc zmiennej z panelu administracyjnego
         {
-            
             Dictionary::addBanToUser($user_id);
             $mes = $mes." Otrzymałeś 14 dniowy zakaz dodawania postów.";
         }
@@ -76,11 +87,7 @@ class Dictionary {
         Dictionary::connectToDatabase();
         return Dictionary::getArray($str);
     }
-    
-    
-    
-    
-    //do panelu
+
     public static function addWordToDictionary($word)
     {
         global $context;

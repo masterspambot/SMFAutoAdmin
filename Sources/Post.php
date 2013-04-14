@@ -1981,13 +1981,15 @@ function Post2()
 		'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],
 	);
   
-  checkRegexpsWithSettings($user_info['id']);
-  
-  require_once 'Dictionary.php';
-  $result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $regexp_check);
+        checkRegexpsWithSettings($user_info['id']);
+
+        require_once 'Dictionary.php';
+        $result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $regexp_check);
   
 
 	// This is an already existing message. Edit it.
+  
+  
         $analiza_slownikowa = Dictionary::checkWithDictionary($_POST['message']);
         if( $analiza_slownikowa == 0)
         {
