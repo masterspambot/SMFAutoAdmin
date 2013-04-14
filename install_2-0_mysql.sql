@@ -1777,8 +1777,23 @@ VALUES ('smfVersion', '{$smf_version}'),
 	('attachment_image_reencode', '1'),
 	('attachment_image_paranoid', '0'),
 	('attachment_thumb_png', '1'),
-	('avatar_reencode', '1'),
-	('avatar_paranoid', '0');
+	('mod_forb_list', ''),
+	('mod_forb_word', '0'),
+	('mod_ban_list', ''),
+	('mod_ban_word', '0'),
+	('mod_askimet_key', ''),
+	('mod_askimet', '0'),
+	('mod_block_gg', ''),
+	('mod_block_links', ''),
+	('mod_block_email', ''),
+	('mod_block_topic', ''),
+	('mod_min_len', '5'),
+	('mod_max_len', '300'),
+	('mod_block_topic_warn', ''),
+	('mod_max_caps', '20'),
+	('mod_max_caps_warn', ''),
+	('mod_max_emots', '4'),
+	('mod_max_emots_warn', '');
 # --------------------------------------------------------
 
 #

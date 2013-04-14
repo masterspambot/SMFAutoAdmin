@@ -1933,7 +1933,7 @@ function ModifyWarningTemplate()
 // Change moderation preferences.
 function ModerationSettings()
 {
-	global $context, $smcFunc, $txt, $sourcedir, $scripturl, $user_settings, $user_info;
+	global $context, $smcFunc, $txt, $sourcedir, $scripturl, $user_settings, $user_info, $modSettings;
 
 	// Some useful context stuff.
 	loadTemplate('ModerationCenter');
@@ -2008,6 +2008,28 @@ function ModerationSettings()
 		// Put it all together.
 		$mod_prefs = $show_reports . '|' . $mod_blocks . '|' . $pref_binary;
 		updateMemberData($user_info['id'], array('mod_prefs' => $mod_prefs));
+		
+		$modSettings_update = array(
+			'mod_forb_list' => empty($_POST['mod_forb_list']) ? '' : $_POST['mod_forb_list'],
+			'mod_forb_word' => empty($_POST['mod_forb_word']) ? 0 : $_POST['mod_forb_word'],
+			'mod_ban_list' => empty($_POST['mod_ban_list']) ? '' : $_POST['mod_ban_list'],
+			'mod_ban_word' => empty($_POST['mod_ban_word']) ? 0 : $_POST['mod_ban_word'],
+			'mod_askimet_key' => empty($_POST['mod_askimet_key']) ? '' : $_POST['mod_askimet_key'],
+			'mod_askimet' => empty($_POST['mod_askimet']) ? 0 : $_POST['mod_askimet'],
+			'mod_block_gg' => empty($_POST['mod_block_gg']) ? '' : $_POST['mod_block_gg'],
+			'mod_block_email' => empty($_POST['mod_block_email']) ? '' : $_POST['mod_block_email'],
+			'mod_block_links' => empty($_POST['mod_block_links']) ? '' : $_POST['mod_block_links'],
+			'mod_block_topic' => empty($_POST['mod_block_topic']) ? '' : $_POST['mod_block_topic'],
+			'mod_min_len' => empty($_POST['mod_min_len']) ? 5 : $_POST['mod_min_len'],
+			'mod_max_len' => empty($_POST['mod_max_len']) ? 300 : $_POST['mod_max_len'],
+			'mod_block_topic_warn' => empty($_POST['mod_block_topic_warn']) ? '' : $_POST['mod_block_topic_warn'],
+			'mod_max_caps' => empty($_POST['mod_max_caps']) ? 20 : $_POST['mod_max_caps'],
+			'mod_max_caps_warn' => empty($_POST['mod_max_caps_warn']) ? '' : $_POST['mod_max_caps_warn'],
+			'mod_max_emots' => empty($_POST['mod_max_emots']) ? 4 : $_POST['mod_max_emots'],
+			'mod_max_emots_warn' => empty($_POST['mod_max_emots_warn']) ? '' : $_POST['mod_max_emots_warn']
+		);
+
+		updateSettings($modSettings_update, true, false);
 	}
 
 	// What blocks does the user currently have selected?
@@ -2015,23 +2037,7 @@ function ModerationSettings()
 		'show_reports' => $show_reports,
 		'notify_report' => $pref_binary & 2 ? 1 : ($pref_binary & 1 ? 2 : 0),
 		'notify_approval' => $pref_binary & 4,
-		'user_blocks' => str_split($mod_blocks),
-		'mod_forb_list' => !isset($_POST['mod_forb_list']) ? '' : $_POST['mod_forb_list'],
-		'mod_forb_word' => !isset($_POST['mod_forb_word']) ? 0 : $_POST['mod_forb_word'],
-		'mod_ban_list' => !isset($_POST['mod_ban_list']) ? '' : $_POST['mod_ban_list'],
-		'mod_ban_word' => !isset($_POST['mod_ban_word']) ? 0 : $_POST['mod_ban_word'],
-		'mod_askimet' => !isset($_POST['mod_askimet']) ? '' : $_POST['mod_askimet'],
-		'mod_block_gg' => !isset($_POST['mod_block_gg']) ? '' : $_POST['mod_block_gg'],
-		'mod_block_email' => !isset($_POST['mod_block_email']) ? '' : $_POST['mod_block_email'],
-		'mod_block_links' => !isset($_POST['mod_block_links']) ? '' : $_POST['mod_block_links'],
-		'mod_block_topic' => !isset($_POST['mod_block_topic']) ? '' : $_POST['mod_block_topic'],
-		'min_post_len' => !isset($_POST['min_post_len']) ? 5 : $_POST['min_post_len'],
-		'max_post_len' => !isset($_POST['max_post_len']) ? 300 : $_POST['max_post_len'],
-		'mod_block_topic_warn' => !isset($_POST['mod_block_topic_warn']) ? '' : $_POST['mod_block_topic_warn'],
-		'mod_max_caps' => !isset($_POST['mod_max_caps']) ? 20 : $_POST['mod_max_caps'],
-		'mod_max_caps_warn' => !isset($_POST['mod_max_caps_warn']) ? '' : $_POST['mod_max_caps_warn'],
-		'mod_max_emots' => !isset($_POST['mod_max_emots']) ? 4 : $_POST['mod_max_emots'],
-		'mod_max_emots_warn' => !isset($_POST['mod_max_emots_warn']) ? '' : $_POST['mod_max_emots_warn'],
+		'user_blocks' => str_split($mod_blocks)
 	);
 }
 

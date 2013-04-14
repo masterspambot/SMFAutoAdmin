@@ -1214,11 +1214,9 @@ function Post()
  */
 function regexp_checking()
 {
-  global $board, $topic, $txt, $modSettings, $sourcedir, $context;
-	global $user_info, $board_info, $options, $smcFunc;
-  
   $message = $_REQUEST['message'];
   $counters = new stdClass();
+  
   $email_regexp = '/([0-9a-zA-Z]([-\.\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,9})/';
   $url_regexp = '/((.{1,6}:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?)/';
   $emot_regexp = '/(\:\))|(\;\))|(\:\-\))|(\;\-\))|(\:\()|(\:\-\()|(\;\()|(\;\-\()|(\:D)|(XD)|(\;\*)|(\:\*)/';
@@ -1226,30 +1224,83 @@ function regexp_checking()
   $uppercase_regexp = '/[A-Z]/';
   $lowercase_regexp = '/[^A-Z]/';  // lowercase and other chars
   
-  if(true){
-    preg_match_all($email_regexp, $message, $matches);
-    $counters->emails = count($matches[0]);
-  }
-  if(true){
-    preg_match_all($url_regexp, $message, $matches);
-    $counters->urls = count($matches[0]);
-  }
-  if(true){
-    preg_match_all($emot_regexp, $message, $matches);
-    $counters->emots = count($matches[0]);
-  }
-  if(true){
-    preg_match_all($gg_regexp, $message, $matches);
-    $counters->gg = count($matches[0]);
-  }
-  if(true){
-    preg_match_all($uppercase_regexp, $message, $matches);
-    $counters->uppercase = count($matches[0]);
-    preg_match_all($lowercase_regexp, $message, $matches);
-    $counters->lowercase = count($matches[0]);
-  }
+  preg_match_all($email_regexp, $message, $matches);
+  $counters->emails = count($matches[0]);
+  preg_match_all($url_regexp, $message, $matches);
+  $counters->urls = count($matches[0]);
+  preg_match_all($emot_regexp, $message, $matches);
+  $counters->emots = count($matches[0]);
+  preg_match_all($gg_regexp, $message, $matches);
+  $counters->gg = count($matches[0]);
+  preg_match_all($uppercase_regexp, $message, $matches);
+  $counters->uppercase = count($matches[0]);
+  preg_match_all($lowercase_regexp, $message, $matches);
+  $counters->lowercase = count($matches[0]);
   $counters->post_len = strlen($message);
-  //fatal_error(print_r($counters,true));
+  
+  return $counters;
+}
+
+function checkRegexpsWithSettings($user_id)
+{
+  global $modSettings;
+  
+  $results_object = regexp_checking();
+  
+  if($modSettings['mod_block_gg'] == 1 && $results_object->gg > 0)
+  {
+    return fatal_error('Umieszczono numer GG!');
+  }
+  
+  if($modSettings['mod_block_email'] == 1 && $results_object->emails > 0)
+  {
+    return fatal_error('Umieszczono adres email!');
+  }
+  
+  if($modSettings['mod_block_links'] == 1 && $results_object->urls > 0)
+  {
+    return fatal_error('Umieszczono adres URL!');
+  }
+  
+  if($modSettings['mod_min_len'] > $results_object->post_len)
+  {
+    if($modSettings['mod_block_topic_warn'] == 1)
+    {
+      require_once 'Dictionary.php';
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+    }
+    return fatal_error('Minimalna dlugosc posta to: ' . $modSettings['mod_min_len'] . '<br />' . $result_raport);
+  }
+  
+  if($modSettings['mod_max_len'] < $results_object->post_len)
+  {
+    if($modSettings['mod_block_topic_warn'] == 1)
+    {
+      require_once 'Dictionary.php';
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+    }
+    return fatal_error('Maksymalna dlugosc posta to: ' . $modSettings['mod_max_len'] . '<br />' . $result_raport);
+  }
+  
+  if($modSettings['mod_max_caps'] < ($results_object->uppercase / $results_object->post_len))
+  {
+    if($modSettings['mod_max_caps_warn'] == 1)
+    {
+      require_once 'Dictionary.php';
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+    }
+    return fatal_error('Maksymalna ilosc duzych liter to: ' . $modSettings['mod_max_caps'] . '%<br />' . $result_raport);
+  }
+  
+  if($modSettings['mod_max_emots'] < $results_object->emots)
+  {
+    if($modSettings['mod_max_caps_warn'] == 1)
+    {
+      require_once 'Dictionary.php';
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+    }
+    return fatal_error('Maksymalna ilosc emotikonek to: ' . $modSettings['mod_max_len'] . '<br />' . $result_raport);
+  }
 }
 
 function Post2()
@@ -1279,8 +1330,6 @@ function Post2()
 		// We need this for everything else.
 		$_POST['message'] = $_REQUEST['message'];
 	}
-  
-  regexp_checking();
 
 	// Previewing? Go back to start.
 	if (isset($_REQUEST['preview']))
@@ -1931,11 +1980,12 @@ function Post2()
 		'email' => $_POST['email'],
 		'update_post_count' => !$user_info['is_guest'] && !isset($_REQUEST['msg']) && $board_info['posts_count'],
 	);
-        
-        
-        
-        
-        require_once 'Dictionary.php';
+  
+  checkRegexpsWithSettings($user_info['id']);
+  
+  require_once 'Dictionary.php';
+  $result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $regexp_check);
+  
 
 	// This is an already existing message. Edit it.
         $analiza_slownikowa = Dictionary::checkWithDictionary($_POST['message']);
