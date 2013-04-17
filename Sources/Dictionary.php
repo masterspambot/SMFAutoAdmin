@@ -16,10 +16,23 @@ class Dictionary {
     {   
         global $modSettings;
         $list_ban_word = $modSettings['mod_ban_list'];
+        $list_ban_word = str_replace(" ", "", $list_ban_word);
+        $list = explode(',', $list_ban_word);
+        $counter = 0;
+        foreach ($list as $w) {
+            if (strpos($message, $w) !== false) {
+                $counter++;
+            }
+        } 
+        return $counter;
+    }
+    
+    public static function checkForbiddenWords($message)
+    {
+        global $modSettings;
         $list_forbidden_words = $modSettings['mod_forb_list'];
-        $list = $list_ban_word.','.$list_forbidden_words;
-        $list = explode(',', $list);
-        
+        $list_forbidden_words = str_replace(" ", "", $list_forbidden_words);
+        $list = explode(',', $list_forbidden_words);
         Dictionary::connectToDatabase();
         $words = Dictionary::getAllWordsFromDictionary();
         $counter = 0;
@@ -32,46 +45,136 @@ class Dictionary {
             if (strpos($message, $w) !== false) {
                 $counter++;
             }
-        } 
+        }
         return $counter;
     }
+    public static function muteAction($counter, $user)
+    {
+        $mes = "Znaleziono $counter slow łamiących regulamin!. ";
+        $mes.= Dictionary::raportujZlamanieRegulaminu($user, 1);
+        //user 1 is admin
+        Dictionary::sendPrivateMessage($mes, "1", $user);
+        return array(FALSE, NULL);
+    }
     
+    public static function WarnAction($counter, $user)
+    {
+        $mes = "Znaleziono $counter slow łamiących regulamin!. ";
+        $mes.= Dictionary::raportujZlamanieRegulaminu($user, 1);
+        return array(TRUE, $mes);
+    }
+
+    public static function ModerateAction()
+    {
+        return array(TRUE, "Twoj post poszedl do moderacji");
+    }
+    
+    public static function DropAction($user)
+    {
+        Dictionary::addBanToUser($user, 2);
+        return array(TRUE, "Twoje konto zostalo usuniete");
+    }
+
+    public static function sendPrivateMessage($content, $from, $to)
+    {
+        $t = time();
+        global $context;
+        $prefix = $context['my_prefix'];
+        $str = "insert into ".$prefix."personal_messages(id_pm_head, id_member_from, deleted_by_sender, from_name, msgtime, subject, body) values 
+            ('2', '$from', '1', 'admin', '$t', 'Ostrzezenie', '$content')"; 
+        Dictionary::executeQuery($str);
+        $str2 = "select id_pm from ".$prefix."personal_messages where msgtime = '$t'";
+        $w = Dictionary::getArray($str2);
+        $pm_id = $w[0]->id_pm;
+        
+        $str2 = "insert into ".$prefix."pm_recipients (id_pm, id_member, labels, bcc, is_read, is_new, deleted) values ('$pm_id', '$to', '-1', 0, 0, 1, 0)";
+        Dictionary::executeQuery($str2);
+        
+    }
+
+    public static function makeDictionaryAnalyse($message, $user, $messageid)
+    {
+        global $modSettings;
+        $settings = $modSettings['mod_ban_word'];
+        $forbSetting = $modSettings['mod_forb_word'];
+        $forb_result = Dictionary::checkForbiddenWords($message);
+        $ban_result = Dictionary::checkWithDictionary($message);
+
+        $forbAnswer = false;
+        
+        if($forb_result > 0) {
+        if($forbSetting == 0)
+            $forbAnswer = Dictionary::WarnAction($forb_result,$user);
+        else if($forbSetting == 1)
+            $forbAnswer = Dictionary::muteAction($forb_result,$user);
+        else if($forbSetting == 2)
+            $forbAnswer = Dictionary::ModerateAction();
+        else if($forbSetting == 3)
+            $forbAnswer = Dictionary::DropAction($user);
+        }
+        
+        $banAnswer = false;
+        if($ban_result > 0) {
+        if($settings == 0)
+            $banAnswer = Dictionary::WarnAction ($ban_result,$user);
+        else if($settings == 1)
+            $banAnswer = Dictionary::muteAction ($ban_result,$user);
+        else if($settings == 2)
+            $banAnswer = Dictionary::ModerateAction();
+        else if($settings == 3)
+            $banAnswer = Dictionary::DropAction ($user);
+        }
+        
+        if($banAnswer[0] || $forbAnswer[0])
+            $res = true;
+        else 
+            $res = false;
+        $message = $banAnswer[1]." ".$forbAnswer[1];
+        return array($res, $message);
+    }
     
     public static function raportujZlamanieRegulaminu($user_id, $points)
     {
         global $context;
+        global $modSettings;
+        
+        $maxWarnings = $modSettings['warning_watch'];
         $prefix = $context['my_prefix'];
         $str = "update ".$prefix."members set ban_counter = ban_counter + 1 where id_member = '$user_id' ";
-        
         $str2 = "select ban_counter as licznik from ".$prefix."members where id_member = '$user_id'";
         Dictionary::connectToDatabase();
         Dictionary::executeQuery($str);
         $obj = Dictionary::getArray($str2);
-        $licznik = $obj[0]->licznik;
-        $mes = "Twoj post jest w $points miejscach niezgodny z regulaminem! To Twoje $licznik ostrzeżenie!";
-        
-        
-        if($licznik > 5) //tu nalezy uzyc zmiennej z panelu administracyjnego
+        $warningsCounter = $obj[0]->licznik;
+        $mes = "To Twoje $warningsCounter ostrzeżenie!";
+        if($warningsCounter > $maxWarnings)
         {
-            Dictionary::addBanToUser($user_id);
+            Dictionary::addBanToUser($user_id,1);
             $mes = $mes." Otrzymałeś 14 dniowy zakaz dodawania postów.";
         }
         return $mes;
     }
     
-    private static function addBanToUser($user)
+    private static function addBanToUser($user, $type)
     {
         global $context;
-        $t = time();
-        $t2 = $t+ (60*60*24*14);
+        
         $prefix = $context['my_prefix'];
-        
         Dictionary::connectToDatabase();
-        
-        $str1 = "insert into ".$prefix."ban_groups (name,ban_time,expire_time,cannot_access, cannot_register, cannot_post, cannot_login)
-            values ('ban_from_autoSfm$t', '$t', '$t2', 0, 0, 1, 0)";
+        $t = time();
+        if($type == 1)
+        {
+            $t2 = $t+ (60*60*24*14);
+            $str1 = "insert into ".$prefix."ban_groups (name,ban_time,expire_time,cannot_access, cannot_register, cannot_post, cannot_login)
+                values ('ban_smf_$t', '$t', '$t2', 0, 0, 1, 0)";
+        }
+        else 
+        {
+            $t2 = $t+ (60*60*24*360);
+            $str1 = "insert into ".$prefix."ban_groups (name,ban_time,expire_time,cannot_access, cannot_register, cannot_post, cannot_login)
+            values ('ban_smf_$t', '$t', '$t2', 1, 1, 1, 1)";
+        }
         Dictionary::executeQuery($str1);
-        
         $str2 = "select id_ban_group from ".$prefix."ban_groups where ban_time = '$t'";
         $w = Dictionary::getArray($str2);
         $ban_id = $w[0]->id_ban_group;
@@ -88,33 +191,6 @@ class Dictionary {
         return Dictionary::getArray($str);
     }
 
-    public static function addWordToDictionary($word)
-    {
-        global $context;
-        $prefix = $context['my_prefix'];
-        $str = "insert into ".$prefix."dictionary_admin (word, word_status, active_word) values ('$word', '1','1') ";
-        Dictionary::executeQuery($str);
-    }
-    //do panelu
-    public static function getAllWordsFromDictionaryToEdit()
-    {
-        global $context;
-        $prefix = $context['my_prefix'];
-        $str = "SELECT word FROM ".$prefix."dictionary_admin ";
-        Dictionary::connectToDatabase();
-        return Dictionary::getArray($str);
-    }
-    //do panelu
-    public static function changeActivePropertyOfWord($word)
-    {
-        global $context;
-        $prefix = $context['my_prefix'];
-        $str = "update ".$prefix."dictionary_admin set active_word = 1 - active_word where word = '$word' ";
-        Dictionary::executeQuery($str);
-    }
-    
-    
-    
     //database function
     private static function connectToDatabase()
     {

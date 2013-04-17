@@ -1984,14 +1984,14 @@ function Post2()
         checkRegexpsWithSettings($user_info['id']);
 
         require_once 'Dictionary.php';
-        $result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $regexp_check);
+        //$result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $regexp_check);
   
 
 	// This is an already existing message. Edit it.
   
   
-        $analiza_slownikowa = Dictionary::checkWithDictionary($_POST['message']);
-        if( $analiza_slownikowa == 0)
+        $analiza_slownikowa = Dictionary::makeDictionaryAnalyse($_POST['message'], $user_info['id'], "");
+        if( $analiza_slownikowa[0] == FALSE)
         {
             if (!empty($_REQUEST['msg']))
             {
@@ -2017,8 +2017,8 @@ function Post2()
                             $topic = $topicOptions['id'];
             }
             } else {
-                $result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $analiza_slownikowa);
-                fatal_error($result_raport, 'user');
+                //$result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $analiza_slownikowa);
+                fatal_error($analiza_slownikowa[1], 'user');
 
             }
 	// Editing or posting an event?
