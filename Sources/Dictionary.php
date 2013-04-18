@@ -48,19 +48,19 @@ class Dictionary {
         }
         return $counter;
     }
-    public static function muteAction($counter, $user)
+    public static function muteAction($counter, $user, $obligatoryBan)
     {
         $mes = "Znaleziono $counter slow łamiących regulamin!. ";
-        $mes.= Dictionary::raportujZlamanieRegulaminu($user, 1);
+        $mes.= Dictionary::raportujZlamanieRegulaminu($user, $obligatoryBan);
         //user 1 is admin
         Dictionary::sendPrivateMessage($mes, "1", $user);
         return array(FALSE, NULL);
     }
     
-    public static function WarnAction($counter, $user)
+    public static function WarnAction($counter, $user, $obligatoryBan)
     {
         $mes = "Znaleziono $counter slow łamiących regulamin!. ";
-        $mes.= Dictionary::raportujZlamanieRegulaminu($user, 1);
+        $mes.= Dictionary::raportujZlamanieRegulaminu($user, $obligatoryBan);
         return array(TRUE, $mes);
     }
 
@@ -104,9 +104,9 @@ class Dictionary {
         
         if($forb_result > 0) {
         if($forbSetting == 0)
-            $forbAnswer = Dictionary::WarnAction($forb_result,$user);
+            $forbAnswer = Dictionary::WarnAction($forb_result, $user, 0);
         else if($forbSetting == 1)
-            $forbAnswer = Dictionary::muteAction($forb_result,$user);
+            $forbAnswer = Dictionary::muteAction($forb_result, $user, 0);
         else if($forbSetting == 2)
             $forbAnswer = Dictionary::ModerateAction();
         else if($forbSetting == 3)
@@ -116,9 +116,9 @@ class Dictionary {
         $banAnswer = false;
         if($ban_result > 0) {
         if($settings == 0)
-            $banAnswer = Dictionary::WarnAction ($ban_result,$user);
+            $banAnswer = Dictionary::WarnAction ($ban_result,$user, 1);
         else if($settings == 1)
-            $banAnswer = Dictionary::muteAction ($ban_result,$user);
+            $banAnswer = Dictionary::muteAction ($ban_result,$user, 1);
         else if($settings == 2)
             $banAnswer = Dictionary::ModerateAction();
         else if($settings == 3)
@@ -133,25 +133,33 @@ class Dictionary {
         return array($res, $message);
     }
     
-    public static function raportujZlamanieRegulaminu($user_id, $points)
+    public static function raportujZlamanieRegulaminu($user_id, $obligatoryBan)
     {
         global $context;
         global $modSettings;
         
-        $maxWarnings = $modSettings['warning_watch'];
-        $prefix = $context['my_prefix'];
-        $str = "update ".$prefix."members set ban_counter = ban_counter + 1 where id_member = '$user_id' ";
-        $str2 = "select ban_counter as licznik from ".$prefix."members where id_member = '$user_id'";
-        Dictionary::connectToDatabase();
-        Dictionary::executeQuery($str);
-        $obj = Dictionary::getArray($str2);
-        $warningsCounter = $obj[0]->licznik;
-        $mes = "To Twoje $warningsCounter ostrzeżenie!";
-        if($warningsCounter > $maxWarnings)
+        if($obligatoryBan == 1)
         {
-            Dictionary::addBanToUser($user_id,1);
-            $mes = $mes." Otrzymałeś 14 dniowy zakaz dodawania postów.";
+                Dictionary::addBanToUser($user_id, 1);
+                $mes = $mes." Otrzymałeś 14 dniowy zakaz dodawania postów.";
+        } else {
+            $maxWarnings = $modSettings['warning_watch'];
+            $prefix = $context['my_prefix'];
+            $str = "update ".$prefix."members set ban_counter = ban_counter + 1 where id_member = '$user_id' ";
+            $str2 = "select ban_counter as licznik from ".$prefix."members where id_member = '$user_id'";
+            Dictionary::connectToDatabase();
+            Dictionary::executeQuery($str);
+            $obj = Dictionary::getArray($str2);
+            $warningsCounter = $obj[0]->licznik;
+        
+            if($warningsCounter > $maxWarnings)
+            { 
+                $mes = "To Twoje $warningsCounter ostrzeżenie!";
+                Dictionary::addBanToUser($user_id, 1);
+                $mes = $mes." Otrzymałeś 14 dniowy zakaz dodawania postów.";
+            }
         }
+        
         return $mes;
     }
     

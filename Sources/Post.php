@@ -1267,7 +1267,7 @@ function checkRegexpsWithSettings($user_id)
     if($modSettings['mod_block_topic_warn'] == 1)
     {
       require_once 'Dictionary.php';
-      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 0);
     }
     return fatal_error('Minimalna dlugosc posta to: ' . $modSettings['mod_min_len'] . '<br />' . $result_raport);
   }
@@ -1277,7 +1277,7 @@ function checkRegexpsWithSettings($user_id)
     if($modSettings['mod_block_topic_warn'] == 1)
     {
       require_once 'Dictionary.php';
-      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 0);
     }
     return fatal_error('Maksymalna dlugosc posta to: ' . $modSettings['mod_max_len'] . '<br />' . $result_raport);
   }
@@ -1287,7 +1287,7 @@ function checkRegexpsWithSettings($user_id)
     if($modSettings['mod_max_caps_warn'] == 1)
     {
       require_once 'Dictionary.php';
-      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 0);
     }
     return fatal_error('Maksymalna ilosc duzych liter to: ' . $modSettings['mod_max_caps'] . '%<br />' . $result_raport);
   }
@@ -1297,7 +1297,7 @@ function checkRegexpsWithSettings($user_id)
     if($modSettings['mod_max_caps_warn'] == 1)
     {
       require_once 'Dictionary.php';
-      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id, 1);
+      $result_raport = Dictionary::raportujZlamanieRegulaminu(user_id,0);
     }
     return fatal_error('Maksymalna ilosc emotikonek to: ' . $modSettings['mod_max_len'] . '<br />' . $result_raport);
   }
