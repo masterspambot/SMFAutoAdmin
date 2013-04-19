@@ -175,9 +175,11 @@ class Dictionary {
         } else {
             $maxWarnings = $modSettings['warning_watch'];
             $prefix = $context['my_prefix'];
+            $str0 = "update ".$prefix."members set ban_counter = 0 where ban_counter is null ";
             $str = "update ".$prefix."members set ban_counter = ban_counter + 1 where id_member = '$user_id' ";
             $str2 = "select ban_counter as licznik from ".$prefix."members where id_member = '$user_id'";
             Dictionary::connectToDatabase();
+            Dictionary::executeQuery($str0);
             Dictionary::executeQuery($str);
             $obj = Dictionary::getArray($str2);
             $warningsCounter = $obj[0]->licznik;
