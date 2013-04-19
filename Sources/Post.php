@@ -1984,14 +1984,11 @@ function Post2()
         checkRegexpsWithSettings($user_info['id']);
 
         require_once 'Dictionary.php';
-        //$result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $regexp_check);
-  
-
 	// This is an already existing message. Edit it.
   
   
-        $analiza_slownikowa = Dictionary::makeDictionaryAnalyse($_POST['message'], $user_info['id'], "");
-        if( $analiza_slownikowa[0] == FALSE)
+        $analiza_slownikowa = Dictionary::makeDictionaryAnalyse($_POST['message'], $user_info['id'], $msgOptions['id']);
+        if( $analiza_slownikowa[0] == 2)
         {
             if (!empty($_REQUEST['msg']))
             {
@@ -2016,10 +2013,16 @@ function Post2()
                     if (isset($topicOptions['id']))
                             $topic = $topicOptions['id'];
             }
-            } else {
-                //$result_raport = Dictionary::raportujZlamanieRegulaminu($user_info['id'], $analiza_slownikowa);
-                fatal_error($analiza_slownikowa[1], 'user');
+            } else if ( $analiza_slownikowa[0] == 3 ) {
+                //add with moderation log
+                createPost($msgOptions, $topicOptions, $posterOptions);
 
+                    if (isset($topicOptions['id']))
+                            $topic = $topicOptions['id'];
+                    Dictionary::addModerationLog($context['created_post']);
+                    fatal_error($analiza_slownikowa[1], 'user');
+            } else {
+                fatal_error($analiza_slownikowa[1], 'user');
             }
 	// Editing or posting an event?
 	if (isset($_POST['calendar']) && (!isset($_REQUEST['eventid']) || $_REQUEST['eventid'] == -1))

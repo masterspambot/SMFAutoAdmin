@@ -66,7 +66,7 @@ class Dictionary {
 
     public static function ModerateAction()
     {
-        return array(TRUE, "Twoj post poszedl do moderacji");
+        return array(TRUE, "Twoj post zostanie poddany moderacji.");
     }
     
     public static function DropAction($user)
@@ -126,13 +126,43 @@ class Dictionary {
         }
         
         if($banAnswer[0] || $forbAnswer[0])
-            $res = true;
+        {
+            if($settings == 2)
+                $res = 3;
+            else 
+                $res = 1;
+        }
         else 
-            $res = false;
+            $res = 2;
+
         $message = $banAnswer[1]." ".$forbAnswer[1];
         return array($res, $message);
     }
-    
+    public static function addModerationLog($msg_id)
+    {
+        global $context;
+        $prefix = $context['my_prefix'];
+            $str2 = "select id_topic, id_board, id_member, poster_name as member, body from ".$prefix."messages where id_msg = '$msg_id'";
+            Dictionary::connectToDatabase();
+            $obj = Dictionary::getArray($str2);
+            $id_topic = $obj[0]->id_topic;
+            $id_board = $obj[0]->id_board;
+            $id_member = $obj[0]->id_member;
+            $member = $obj[0]->member;
+            $body = $obj[0]->body;
+            $t = time();
+            $str2 = "insert into ".$prefix."log_reported (id_msg, id_topic, id_board, id_member, membername, subject, body, time_started, time_updated, num_reports, closed, ignore_all) values 
+            ('$msg_id', '$id_topic', '$id_board', '$id_member', '$member', 'Auto Ostrzezenie', '$body', '$t', '$t', '1', '0', '0')";
+            Dictionary::executeQuery($str2);
+            
+            $str3 = "select id_report from ".$prefix."log_reported where time_started = '$t'";
+            $obj2 = Dictionary::getArray($str3);
+            $id_rep = $obj2[0]->id_report;
+            $str4 = "insert into ".$prefix."log_reported_comments (id_report, id_member, membername, comment, time_sent) values 
+            ('$id_rep', '$id_member', '$member', 'Użytkownik złamał regulamin!', '$t')";
+            Dictionary::executeQuery($str4);
+    }
+
     public static function raportujZlamanieRegulaminu($user_id, $obligatoryBan)
     {
         global $context;

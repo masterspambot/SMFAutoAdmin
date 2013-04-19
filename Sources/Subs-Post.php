@@ -1823,11 +1823,11 @@ function createPost(&$msgOptions, &$topicOptions, &$posterOptions)
 		array('id_msg')
 	);
 	$msgOptions['id'] = $smcFunc['db_insert_id']('{db_prefix}messages', 'id_msg');
-
+        
 	// Something went wrong creating the message...
 	if (empty($msgOptions['id']))
 		return false;
-
+        $context['created_post'] = $msgOptions['id'];
 	// Fix the attachments.
 	if (!empty($msgOptions['attachments']))
 		$smcFunc['db_query']('', '
