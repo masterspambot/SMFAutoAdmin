@@ -183,10 +183,10 @@ class Dictionary {
             Dictionary::executeQuery($str);
             $obj = Dictionary::getArray($str2);
             $warningsCounter = $obj[0]->licznik;
-        
+            $mes = "To Twoje $warningsCounter ostrzeżenie!";
             if($warningsCounter > $maxWarnings)
             { 
-                $mes = "To Twoje $warningsCounter ostrzeżenie!";
+                
                 Dictionary::addBanToUser($user_id, 1);
                 $mes = $mes." Otrzymałeś 14 dniowy zakaz dodawania postów.";
             }
